@@ -8,9 +8,9 @@ micros:
     dev: cargo run
     commands:
       - echo "Executable built on GitHub Action"
-    run: ./target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
+    run: ./scrape_trout_stocking
     include:
-      - target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
+      - scrape_trout_stocking
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
