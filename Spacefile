@@ -2,17 +2,18 @@
 
 v: 0
 micros:
-    - name: data-scraping
-      src: data-scraping
-      engine: custom
-      dev: cargo run
-      commands: []
-      run: ./target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
-      include:
-        - target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
-      actions:
-        - id: "scrape-new-data"
-          name: "Scrape new data"
-          description: "Collects new data and saves it to Deta Base."
-          trigger: "schedule"
-          default_interval: "0 5,12,21 * * *"
+  - name: data-scraping
+    src: data-scraping
+    engine: custom
+    dev: cargo run
+    commands:
+      - echo "Executable built on GitHub Action"
+    run: ./target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
+    include:
+      - target/x86_64-unknown-linux-musl/release/scrape_trout_stocking
+    actions:
+      - id: "scrape-new-data"
+        name: "Scrape new data"
+        description: "Collects new data and saves it to Deta Base."
+        trigger: "schedule"
+        default_interval: "0 5,12,21 * * *"

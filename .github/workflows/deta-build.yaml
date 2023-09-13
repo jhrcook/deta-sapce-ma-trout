@@ -13,13 +13,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: crosslink toolchain
+        uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: x86_64-unknown-linux-musl
           override: true
-      - uses: actions-rs/cargo@v1
+      - name: build crate
+        uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: build
           args: --release --target x86_64-unknown-linux-musl --manifest-path data-scraping/Cargo.toml
+      - name: Deta Space Push
+        uses: neobrains/space-deployment-github-action@v0.5
+        with:
+          access_token: ${{ secrets.ACCESS_TOKEN }}
+          project_id: ${{ secrets.PROJECT_ID }}
+          space_push: true
