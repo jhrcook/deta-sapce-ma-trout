@@ -25,16 +25,16 @@ jobs:
           use-cross: true
           command: build
           args: --release --target x86_64-unknown-linux-musl --manifest-path data-scraping/Cargo.toml
-      - name: Install Deta Space CLI & set SPACE_ACCESS_TOKEN environment variable
+      - name: install Deta Space CLI and link to project
         shell: bash
         run: |
           curl -fsSL https://get.deta.dev/space-cli.sh | sh
           echo "$HOME/.detaspace/bin" >> $GITHUB_PATH
           echo "SPACE_ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}" >> $GITHUB_ENV
-      - name: Push changes to Deta Space
+      - name: push to Deta Space
         shell: bash
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
-          ls -lha
           cp data-scraping/target/x86_64-unknown-linux-musl/release/scrape_trout_stocking .
+          ls -lha
           space push
