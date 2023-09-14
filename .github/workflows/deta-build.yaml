@@ -35,6 +35,7 @@ jobs:
         shell: bash
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
-          cp data-scraping/target/x86_64-unknown-linux-musl/release/scrape_trout_stocking .
+          cp data-scraping/target/x86_64-unknown-linux-musl/release/scrape_trout_stocking data-scraping/
           ls -lha
+          ls -lha data-scraping/
           space push

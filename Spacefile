@@ -6,11 +6,13 @@ micros:
     src: data-scraping
     engine: custom
     dev: cargo run
+    include:
+      - ./scrape_trout_stocking
     commands:
       - echo "Executable built on GitHub Action"
+      - pwd
+      - ls -lha
     run: ./scrape_trout_stocking
-    include:
-      - scrape_trout_stocking
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
