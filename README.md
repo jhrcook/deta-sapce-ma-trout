@@ -6,8 +6,8 @@
 
 ## To-Do
 
-- [ ] logging in data scraping micro
 - [ ] change data scraping cron job to times in UTC
+- [ ] fix pre-commit to work with this project structure
 
 ## Deployment
 

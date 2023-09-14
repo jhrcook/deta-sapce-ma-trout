@@ -11,7 +11,7 @@ pub async fn get_spreadsheet_url() -> Result<String> {
 
     match result.status() {
         reqwest::StatusCode::OK => {
-            println!("Successfully downloaded trout stocking table HTML.");
+            info!("Successfully downloaded trout stocking table HTML.");
         }
         _ => {
             panic!("Unable to get trout stocking table HTML.");
@@ -35,7 +35,7 @@ pub async fn get_trout_stocking_page(spreadsheet_url: &str) -> Result<String> {
     let res = reqwest::get(spreadsheet_url).await?;
 
     match res.status() {
-        reqwest::StatusCode::OK => println!("Successfully downloaded spreadsheet data."),
+        reqwest::StatusCode::OK => info!("Successfully downloaded spreadsheet data."),
         _ => panic!("Unable to get trout stocking table HTML."),
     };
     Ok(res.text().await?.to_string())
