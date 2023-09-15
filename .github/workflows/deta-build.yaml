@@ -5,7 +5,7 @@ run-name: Build and push to Deta Space
 on:
   push:
     branches:
-      - maaster
+      - main
 
 jobs:
   build:
