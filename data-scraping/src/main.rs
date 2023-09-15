@@ -11,6 +11,9 @@ use models::TroutStocking;
 use serde::{Deserialize, Serialize};
 use std::env;
 
+#[macro_use]
+extern crate log;
+
 use crate::scraping::{
     get_spreadsheet_url, get_trout_stocking_page, parse_trout_stocking_spreadsheet_data,
 };
@@ -20,19 +23,23 @@ pub mod scraping;
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+    info!("Starting app.");
     let app = Router::new()
         .route("/", get(root))
         .route("/demo", get(demo))
         .route("/__space/v0/actions", post(collect_new_data));
+    info!("Build app routes.");
 
     let port = match env::var("PORT") {
         Ok(v) => v.parse::<u16>().unwrap(),
         Err(_) => {
-            println!("Could not get port from env var.");
+            warn!("Could not get port from env var.");
             3000
         }
     };
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
+    info!("Listening on '{}'.", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
@@ -40,10 +47,12 @@ async fn main() {
 }
 
 async fn root() -> &'static str {
+    info!("Requested root route.");
     "Trout web-scraping Micro"
 }
 
 async fn demo() -> impl IntoResponse {
+    info!("Running demo data scraping.");
     let trout_data_organized = get_data().await.organize();
     (StatusCode::OK, Json(trout_data_organized))
 }
@@ -60,26 +69,29 @@ struct DetaAction {
 }
 
 async fn collect_new_data(Json(payload): Json<DetaAction>) {
-    println!("Payload: {:?}", payload);
+    info!("Recieved payload: {:?}", payload);
     let trout_data = get_data().await;
 
+    info!("Creating Deta client.");
     let deta = Deta::new();
 
     // Push raw data.
+    info!("Connecting to Deta Base 'trout-stocking-raw'.");
     let base = deta.base("trout-stocking-raw");
     let result = base.insert(&trout_data);
     match result {
-        Ok(_) => println!("Successfully pushed raw data."),
-        Err(e) => println!("Error pushing raw data: {}", e),
+        Ok(_) => info!("Successfully pushed raw data."),
+        Err(e) => error!("Error pushing raw data: {}", e),
     }
 
     // Organize data and push if successful.
     let trout_data_df = trout_data.organize();
+    info!("Connecting to Deta Base 'trout-stocking'.");
     let base = deta.base("trout-stocking");
     let result = base.insert(trout_data_df);
     match result {
-        Ok(_) => println!("Successfully pushed organized data."),
-        Err(e) => println!("Error pushing organized data: {}", e),
+        Ok(_) => info!("Successfully pushed organized data."),
+        Err(e) => error!("Error pushing organized data: {}", e),
     }
 }
 
@@ -96,6 +108,6 @@ async fn get_data() -> TroutStocking {
         Ok(d) => d,
         Err(e) => panic!("Failed to parse data: {}", e),
     };
-    println!("Collected trout data - {}", trout_data.timestamp.datetime);
+    info!("Collected trout data at {}", trout_data.timestamp.datetime);
     trout_data
 }
