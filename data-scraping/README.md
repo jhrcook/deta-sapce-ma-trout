@@ -1,17 +1,16 @@
 # Scrape trout stocking data from the MA DCR website
 
-Run as a cron job action on Deta.
+**A web-server to collect and organize trout stocking data from the Massachusetts Department of Conservation and Recreation.**
 
-To-Do:
+## Overview
 
-- [x] refactor into binary and library
-- [x] add a server component to receive Deta action requests
-- [ ] add proper logging instead of just print statements (with 'tracing'?)
+This is intended to be run as a Micro on Deta Space and called periodically to collect and store data for other analyses and notification systems.
+There are three endpoints:
 
-Troubles pushing to Deta:
+1. root (`/`): Just prints a quick message "Trout web-scraping Micro"
+1. demo (`/demo`): Scrapes and returns the current trout stocking data
+1. Deta Space actions (`/__space/v0/actions`): Called by Deta Space to scrape and store the current trout stocking data
 
-- compilation times-out
+## To-Do
 
-To try:
-
-- build on a linux machine in a GitHub Action and push from there
+- [ ] Move the actual data scraping to another crate to leave this one as just a simple web-server for interacting with that crate.
