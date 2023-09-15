@@ -12,27 +12,30 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: crosslink toolchain
+      - name: GitHub Actions checkout
+        uses: actions/checkout@v3
+      - name: Crosslink toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: x86_64-unknown-linux-musl
           override: true
-      - name: build crate
+      - name: Build workspace
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: build
           args: --release --target x86_64-unknown-linux-musl
-      - name: install Deta Space CLI and link to project
+      - name: Install Deta Space CLI and link to project
         shell: bash
         run: |
           curl -fsSL https://get.deta.dev/space-cli.sh | sh
           echo "$HOME/.detaspace/bin" >> $GITHUB_PATH
           echo "SPACE_ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }}" >> $GITHUB_ENV
-      - name: push to Deta Space
+      - name: Push to Deta Space
         shell: bash
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
+          tree -L 2 target/
+          cp ./target/x86_64-unknown-linux-musl/release/trout_scraping_server .
           space push
