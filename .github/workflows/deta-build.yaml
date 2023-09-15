@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+      - workspace
 
 jobs:
   build:
@@ -23,7 +24,7 @@ jobs:
         with:
           use-cross: true
           command: build
-          args: --release --target x86_64-unknown-linux-musl --manifest-path data-scraping/Cargo.toml
+          args: --release --target x86_64-unknown-linux-musl
       - name: install Deta Space CLI and link to project
         shell: bash
         run: |
@@ -34,7 +35,4 @@ jobs:
         shell: bash
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
-          cp data-scraping/target/x86_64-unknown-linux-musl/release/scrape_trout_stocking data-scraping/
-          ls -lha
-          ls -lha data-scraping/
           space push
