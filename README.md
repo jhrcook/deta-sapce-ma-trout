@@ -1,6 +1,6 @@
 # MA Trout Stocking Deta App
 
-An application for collecting and analyzing data from the Massachusetts trout stocking program.
+**An application for collecting and analyzing data from the Massachusetts trout stocking program.**
 
 ## Micros
 
@@ -10,6 +10,12 @@ An application for collecting and analyzing data from the Massachusetts trout st
 
 - front-end for collected data
 - notification system for when trout stocking occurs
+- consider re-organizing this as a [Cargo Workspace](https://doc.rust-lang.org/book/ch14-03-cargo-workspaces.html) where each crate is a Micro
+
+## Tutorials
+
+- [ ] Building and pushing to Deta Space from GH Action
+- [ ] Cargo Workspace for Deta Space application
 
 ## Deployment
 
