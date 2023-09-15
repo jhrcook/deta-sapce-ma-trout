@@ -18,4 +18,4 @@ micros:
         name: "Scrape new data"
         description: "Collects new data and saves it to Deta Base."
         trigger: "schedule"
-        default_interval: "0 5,12,21 * * *"
+        default_interval: "0 */2 * * *"
