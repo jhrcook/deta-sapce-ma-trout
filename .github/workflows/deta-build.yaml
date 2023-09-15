@@ -36,6 +36,5 @@ jobs:
         shell: bash
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
-          tree -L 2 target/
-          cp ./target/x86_64-unknown-linux-musl/release/trout_scraping_server .
+          cp ./target/x86_64-unknown-linux-musl/release/trout_scraping_server trout_scraping_server_app
           space push

@@ -7,12 +7,12 @@ micros:
     engine: custom
     dev: cargo run
     include:
-      - trout_scraping_server
+      - trout_scraping_server_app
     commands:
       - echo "Executable built on GitHub Action"
       - pwd
       - ls -lha
-    run: trout_scraping_server
+    run: trout_scraping_server_app
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
