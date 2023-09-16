@@ -1,4 +1,4 @@
-"""ASGI config for trout_frontend project.
+"""ASGI config for frontend project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -10,6 +10,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "trout_frontend.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "frontend.settings")
 
 application = get_asgi_application()

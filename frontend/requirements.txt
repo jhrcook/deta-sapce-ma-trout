@@ -1,2 +1,4 @@
+deta
 Django
 uvicorn
+python-dotenv
