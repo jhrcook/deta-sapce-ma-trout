@@ -1,0 +1,30 @@
+select = [
+    "F",
+    "E",
+    "W",
+    "I",
+    "N",
+    "D",
+    "UP",
+    "S",
+    "B",
+    "A",
+    "C4",
+    "DJ",
+    "RET",
+    "SIM",
+    "PTH",
+    "TD",
+    "FIX",
+    "PD",
+    "PL",
+    "NPY",
+    "RUF",
+]
+ignore = ["D203", "D213"]
+target-version = "py39"
+include = ["*py"]
+
+
+[pydocstyle]
+convention = "google"

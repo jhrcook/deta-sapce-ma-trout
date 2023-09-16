@@ -2,6 +2,13 @@
 
 v: 0
 micros:
+  - name: front-end
+    src: frontend
+    engine: python3.9
+    primary: true
+    run: uvicorn frontend.asgi:application
+    dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
+
   - name: data-scraping
     src: .
     engine: custom
