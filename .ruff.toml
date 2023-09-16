@@ -21,7 +21,6 @@ select = [
     "NPY",
     "RUF",
 ]
-
-target-version = "py311"
-
-include = ["frontend/"]
+ignore = ["D203", "D213"]
+target-version = "py39"
+include = ["*py"]
