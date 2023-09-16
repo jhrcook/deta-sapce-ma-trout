@@ -2,3 +2,5 @@ deta
 Django
 uvicorn
 python-dotenv
+pydantic
+python-dateutil

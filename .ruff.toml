@@ -24,3 +24,7 @@ select = [
 ignore = ["D203", "D213"]
 target-version = "py39"
 include = ["*py"]
+
+
+[pydocstyle]
+convention = "google"
