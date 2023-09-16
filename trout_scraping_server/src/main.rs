@@ -7,19 +7,15 @@ use axum::{
     Json, Router,
 };
 use detalib::Deta;
-use models::TroutStocking;
 use serde::{Deserialize, Serialize};
 use std::env;
-
-#[macro_use]
-extern crate log;
-
-use crate::scraping::{
+use trout_scraping::models::TroutStocking;
+use trout_scraping::scraping::{
     get_spreadsheet_url, get_trout_stocking_page, parse_trout_stocking_spreadsheet_data,
 };
 
-pub mod models;
-pub mod scraping;
+#[macro_use]
+extern crate log;
 
 #[tokio::main]
 async fn main() {

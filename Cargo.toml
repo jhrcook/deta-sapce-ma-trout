@@ -1,0 +1,3 @@
+[workspace]
+members = ["trout_scraping", "trout_scraping_server"]
+workspace.resolver = "2"

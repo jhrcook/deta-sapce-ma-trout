@@ -3,16 +3,16 @@
 v: 0
 micros:
   - name: data-scraping
-    src: data-scraping
+    src: .
     engine: custom
     dev: cargo run
     include:
-      - ./scrape_trout_stocking
+      - trout_scraping_server_app
     commands:
       - echo "Executable built on GitHub Action"
       - pwd
       - ls -lha
-    run: ./scrape_trout_stocking
+    run: trout_scraping_server_app
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
