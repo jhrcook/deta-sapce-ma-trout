@@ -3,13 +3,12 @@
 v: 0
 micros:
   - name: front-end
-    src: frontenv
+    src: frontend
     engine: python3.9
     primary: true
-    run: uvicorn django_space_app.asgi:app
-    dev: uvicorn django_space_app.asgi:app --reload
-    # public_routes:
-    #   - "/*"
+    run: uvicorn trout_frontend.asgi:application
+    dev: .env/bin/python -m uvicorn trout_frontend.asgi:application --reload
+    
   - name: data-scraping
     src: .
     engine: custom
