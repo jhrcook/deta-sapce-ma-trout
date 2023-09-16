@@ -6,6 +6,8 @@ micros:
     src: frontend
     engine: python3.9
     primary: true
+    include:
+      - secrets.txt
     run: uvicorn frontend.asgi:application
     dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
 
