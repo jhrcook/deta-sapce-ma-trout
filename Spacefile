@@ -3,12 +3,14 @@
 v: 0
 micros:
   - name: front-end
-    src: frontend
+    src: ./frontend/
     engine: python3.9
     primary: true
-    # include:
-    #   - secrets.txt
-    run: uvicorn frontend.asgi:application
+    include:
+      - ./secrets.txt
+      - ./frontend
+      - ./dataviz
+    run: python -m uvicorn frontend.asgi:application
     dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
 
   - name: data-scraping
