@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - fix-deta-deploy
+      - fix-django-secret
 
 jobs:
   build:
