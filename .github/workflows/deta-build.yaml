@@ -37,4 +37,5 @@ jobs:
         run: |
           space link --id "${{ secrets.PROJECT_ID }}"
           cp ./target/x86_64-unknown-linux-musl/release/trout_scraping_server trout_scraping_server_app
+          echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" > frontend/secrets.txt
           space push
