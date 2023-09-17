@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - main
-      - workspace
+      - fix-deta-deploy
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: GitHub Actions checkout
         uses: actions/checkout@v3
-      - name: Crosslink toolchain
+      - name: Cross-link toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable

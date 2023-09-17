@@ -6,6 +6,8 @@ micros:
     src: frontend
     engine: python3.9
     primary: true
+    # include:
+    #   - secrets.txt
     run: uvicorn frontend.asgi:application
     dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
 
@@ -14,12 +16,17 @@ micros:
     engine: custom
     dev: cargo run
     include:
-      - trout_scraping_server_app
+      - ./trout_scraping_server_app
     commands:
       - echo "Executable built on GitHub Action"
       - pwd
       - ls -lha
-    run: trout_scraping_server_app
+    presets:
+      env:
+        - name: RUST_LOG
+          description: Secret message only available to this Micro
+          default: "info"
+    run: ./trout_scraping_server_app
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
