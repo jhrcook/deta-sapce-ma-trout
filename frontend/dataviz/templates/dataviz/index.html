@@ -1,40 +1,25 @@
-<!-- <!DOCTYPE html>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+{% extends 'dataviz/base.html' %}
 
-<h1> {{ title }} </h1>
-<p> {{ trout_data.timestamp.datetime }} </p> -->
+{% block content %}
 
+<div class="column">
 
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trout Stocking</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-</head>
-
-<body>
-    <section class="hero is-primary">
-        <div class="hero-body">
-            <p class="title">
-                Trout Stocking Report
+    <div class="block">
+        <div class="card my-4 p-4">
+            <p> Data last collected on
+                <strong class="has-text-info-dark">{{ trout_report.timestamp.datetime.date }}</strong> at <strong
+                    class="has-text-info-dark">{{ trout_report.timestamp.datetime.time }} UTC</strong>.
             </p>
-            <p class="subtitle">
-                Custom website for studying the MA DCR trout stocking report
+            <p>
+                Go to the official <a target="_blank" href="https://www.mass.gov/info-details/trout-stocking-report">MA
+                    DCR
+                    Trout Stocking Report</a>.
             </p>
         </div>
-    </section>
-
-    <div class="container is-fluid p-6">
-        <p> Data last collected on
-            <strong class="has-text-info-dark">{{ trout_report.timestamp.datetime.date }}</strong> at <strong
-                class="has-text-info-dark">{{ trout_report.timestamp.datetime.time }}</strong>.
-        </p>
     </div>
 
-    <div class="container is-fluid">
+
+    <div>
         <table class="table">
             <thead>
                 <tr>
@@ -54,6 +39,7 @@
             </tbody>
         </table>
     </div>
-</body>
 
-</html>
+</div>
+
+{% endblock content %}
