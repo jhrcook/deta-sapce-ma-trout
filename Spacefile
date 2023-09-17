@@ -9,6 +9,7 @@ micros:
     include:
       - ./secrets.txt
       - ./frontend
+      - ./dataviz
     run: python -m uvicorn frontend.asgi:application
     dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
 
