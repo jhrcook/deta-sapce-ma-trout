@@ -16,11 +16,16 @@ micros:
     engine: custom
     dev: cargo run
     include:
-      - trout_scraping_server_app
+      - ./trout_scraping_server_app
     commands:
       - echo "Executable built on GitHub Action"
       - pwd
       - ls -lha
+    presets:
+      env:
+        - name: RUST_LOG
+          description: Secret message only available to this Micro
+          default: "info"
     run: trout_scraping_server_app
     actions:
       - id: "scrape-new-data"
