@@ -35,6 +35,7 @@ SECRET_KEY: Final[str] = _get_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+DEBUG = False
 
 ALLOWED_HOSTS: Final[list[str]] = [
     ".deta.app",
