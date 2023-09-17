@@ -34,9 +34,13 @@ def _get_secret_key() -> str:
 SECRET_KEY: Final[str] = _get_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS: Final[list[str]] = [".deta.app"]
+ALLOWED_HOSTS: Final[list[str]] = [
+    ".deta.app",
+    "127.0.0.1",
+    "localhost",
+]
 
 
 # Application definition
