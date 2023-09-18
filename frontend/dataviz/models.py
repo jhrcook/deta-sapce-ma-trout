@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 from datetime import datetime
 from enum import Enum
+from functools import cache
 from typing import Annotated, Optional, Union
 
 import polars as pl
@@ -46,6 +47,10 @@ class TroutStockingReport(BaseModel):
         """Data in a table layout."""
         return pl.DataFrame(self.data)
 
+    def __hash__(self) -> int:
+        """Hash for an object based on the timestamp."""
+        return hash(self.timestamp.datetime)
+
 
 class DetaBase(str, Enum):
     """Deta Base ID."""
@@ -78,6 +83,7 @@ def retrieve_stocking_data(
     return [TroutStockingReport(**d) for d in all_items]
 
 
+@cache
 def get_latest_stocking_report() -> TroutStockingReport:
     """Retrieve the most recent trout stocking report."""
     trout_reports = retrieve_stocking_data()

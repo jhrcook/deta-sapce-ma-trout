@@ -14,9 +14,11 @@ from pathlib import Path
 from typing import Final
 
 from dotenv import load_dotenv
+from loguru import logger
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+logger.info(f"BASE_DIR: {BASE_DIR}")
 
 load_dotenv(BASE_DIR / "secrets.txt")
 
@@ -34,7 +36,8 @@ def _get_secret_key() -> str:
 SECRET_KEY: Final[str] = _get_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+logger.info(f"DEBUG: {DEBUG}")
 
 ALLOWED_HOSTS: Final[list[str]] = [
     ".deta.app",
@@ -132,6 +135,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

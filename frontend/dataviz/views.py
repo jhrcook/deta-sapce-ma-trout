@@ -9,8 +9,8 @@ from .models import (
 
 
 # Create your views here.
-def index(request: HttpRequest) -> HttpResponse:
-    """Root view."""
+def current_table(request: HttpRequest) -> HttpResponse:
+    """Current stocking report table view."""
     trout_report = get_latest_stocking_report()
     dataframe = trout_report.data_as_dataframe()
     context = {
@@ -20,6 +20,24 @@ def index(request: HttpRequest) -> HttpResponse:
     }
     return render(
         request=request,
-        template_name="dataviz/index.html",
+        template_name="dataviz/stocking_report_table.html",
         context=context,
+    )
+
+
+def current_map(request: HttpRequest) -> HttpResponse:
+    """Map of current stocking report view."""
+    return render(
+        request=request,
+        template_name="dataviz/stocking_report_map.html",
+        context={},
+    )
+
+
+def analysis(request: HttpRequest) -> HttpResponse:
+    """Analysis of the stocking data view."""
+    return render(
+        request=request,
+        template_name="dataviz/analysis.html",
+        context={},
     )
