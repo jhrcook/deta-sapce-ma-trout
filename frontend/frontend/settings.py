@@ -36,7 +36,7 @@ def _get_secret_key() -> str:
 SECRET_KEY: Final[str] = _get_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 logger.info(f"DEBUG: {DEBUG}")
 
 ALLOWED_HOSTS: Final[list[str]] = [

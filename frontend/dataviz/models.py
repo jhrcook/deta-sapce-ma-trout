@@ -9,6 +9,7 @@ from typing import Annotated, Optional, Union
 import polars as pl
 from dateutil import parser
 from deta import Deta
+from loguru import logger
 from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator
 
@@ -84,8 +85,10 @@ def retrieve_stocking_data(
 
 
 @cache
-def get_latest_stocking_report() -> TroutStockingReport:
+def get_latest_stocking_report(reload: bool = False) -> TroutStockingReport:
     """Retrieve the most recent trout stocking report."""
+    if reload:
+        logger.info("Reloading data (does nothing at the moment...)")
     trout_reports = retrieve_stocking_data()
     trout_reports.sort(key=lambda tr: tr.timestamp.datetime)
     return trout_reports[-1]

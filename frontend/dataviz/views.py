@@ -2,6 +2,7 @@
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from loguru import logger
 
 from .models import (
     get_latest_stocking_report,
@@ -11,7 +12,9 @@ from .models import (
 # Create your views here.
 def current_table(request: HttpRequest) -> HttpResponse:
     """Current stocking report table view."""
-    trout_report = get_latest_stocking_report()
+    logger.info(f"GET: {request.GET}")
+    reload = request.GET.get("refresh", "").lower() == "true"
+    trout_report = get_latest_stocking_report(reload=reload)
     dataframe = trout_report.data_as_dataframe()
     context = {
         "trout_report": trout_report,

@@ -6,15 +6,26 @@
 
     <div class="block">
         <div class="card my-4 p-4">
-            <p> Data last collected on
-                <strong class="has-text-info-dark">{{ trout_report.timestamp.datetime.date }}</strong> at <strong
-                    class="has-text-info-dark">{{ trout_report.timestamp.datetime.time }} UTC</strong>.
-            </p>
-            <p>
-                Go to the official <a target="_blank" href="https://www.mass.gov/info-details/trout-stocking-report">MA
-                    DCR
-                    Trout Stocking Report</a>.
-            </p>
+            <div class="columns">
+                <div class="column">
+                    <p> Data last collected on
+                        <strong class="has-text-info-dark">{{ trout_report.timestamp.datetime.date }}</strong> at
+                        <strong class="has-text-info-dark">{{ trout_report.timestamp.datetime.time }} UTC</strong>.
+                    </p>
+                    <p>
+                        Go to the official <a target="_blank"
+                            href="https://www.mass.gov/info-details/trout-stocking-report">MA
+                            DCR
+                            Trout Stocking Report</a>.
+                    </p>
+                </div>
+                <div class="column">
+                    <form action="{% url 'current_table' %}" method='GET'>
+                        <button name="refresh" type="submit" value=true
+                            class="button level is-primary is-pulled-right is-outlined">Refresh</button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
