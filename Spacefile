@@ -35,3 +35,8 @@ micros:
         description: "Collects new data and saves it to Deta Base."
         trigger: "schedule"
         default_interval: "0 */2 * * *"
+      - id: "reindex-data"
+        name: "Re-index the trout data"
+        description: "Updates the Deta Base that maintains an index of the primary trout stocking data Deta Base."
+        trigger: "schedule"
+        default_interval: "30 1 * * 0"
