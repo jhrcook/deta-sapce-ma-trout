@@ -74,20 +74,10 @@ async fn collect_new_data(Json(payload): Json<DetaAction>) {
     // Push raw data.
     info!("Connecting to Deta Base 'trout-stocking-raw'.");
     let base = deta.base("trout-stocking-raw");
-    let result = base.insert(&trout_data);
+    let result = base.insert(trout_data);
     match result {
         Ok(_) => info!("Successfully pushed raw data."),
         Err(e) => error!("Error pushing raw data: {}", e),
-    }
-
-    // Organize data and push if successful.
-    let trout_data_df = trout_data.organize();
-    info!("Connecting to Deta Base 'trout-stocking'.");
-    let base = deta.base("trout-stocking");
-    let result = base.insert(trout_data_df);
-    match result {
-        Ok(_) => info!("Successfully pushed organized data."),
-        Err(e) => error!("Error pushing organized data: {}", e),
     }
 }
 
