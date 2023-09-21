@@ -31,6 +31,7 @@ pub struct QueryTable {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Timestamp {
     pub datetime: String,
+    pub timestamp: i64,
     pub year: i32,
     pub month: u32,
     pub day: u32,
@@ -44,6 +45,7 @@ impl Default for Timestamp {
         let utc: DateTime<Utc> = Utc::now();
         Timestamp {
             datetime: utc.to_string(),
+            timestamp: utc.timestamp(),
             year: utc.year(),
             month: utc.month(),
             day: utc.day(),
