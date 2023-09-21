@@ -11,7 +11,7 @@ micros:
       - ./frontend
       - ./dataviz
     run: python -m uvicorn frontend.asgi:application
-    dev: .env/bin/python -m uvicorn frontend.asgi:application --reload
+    dev: .env/bin/python -m uvicorn frontend.asgi:application --reload --reload-include "*.html" --reload-include "*.py"
 
   - name: data-scraping
     src: .

@@ -3,11 +3,13 @@
 from collections.abc import Mapping
 from datetime import datetime
 from enum import Enum
+from functools import cache
 from typing import Annotated, Optional, Union
 
 import polars as pl
 from dateutil import parser
 from deta import Deta
+from loguru import logger
 from pydantic import BaseModel
 from pydantic.functional_validators import BeforeValidator
 
@@ -46,6 +48,10 @@ class TroutStockingReport(BaseModel):
         """Data in a table layout."""
         return pl.DataFrame(self.data)
 
+    def __hash__(self) -> int:
+        """Hash for an object based on the timestamp."""
+        return hash(self.timestamp.datetime)
+
 
 class DetaBase(str, Enum):
     """Deta Base ID."""
@@ -78,8 +84,11 @@ def retrieve_stocking_data(
     return [TroutStockingReport(**d) for d in all_items]
 
 
-def get_latest_stocking_report() -> TroutStockingReport:
+@cache
+def get_latest_stocking_report(reload: bool = False) -> TroutStockingReport:
     """Retrieve the most recent trout stocking report."""
+    if reload:
+        logger.info("Reloading data (does nothing at the moment...)")
     trout_reports = retrieve_stocking_data()
     trout_reports.sort(key=lambda tr: tr.timestamp.datetime)
     return trout_reports[-1]
