@@ -44,32 +44,41 @@ impl Display for DetaBase {
     }
 }
 
-pub trait DetaPush: Serialize {
+pub trait DetaPut: Serialize {
     const DETA_BASE: DetaBase;
-    fn deta_push(&self, deta: &Deta) {
+
+    fn deta_put(&self, deta: &Deta) {
         debug!("Connecting to Deta Base: {}", Self::DETA_BASE);
         let base = deta.base(Self::DETA_BASE.as_str());
-        match base.insert(self) {
-            Ok(_) => info!("Successfully push data."),
+        match base.put(vec![self]) {
+            Ok(_) => info!("Successfully PUT data."),
             Err(e) => {
-                error!("Error pushing data: {}", e);
-                panic!("Could not push data.")
+                error!("Error during PUT data: {}", e);
+                panic!("Could not PUT data.")
             }
         }
     }
 }
 
-impl DetaPush for TroutStocking {
+impl DetaPut for TroutStocking {
     const DETA_BASE: DetaBase = DetaBase::TroutStockingRaw;
 }
 
-impl DetaPush for TroutStockingOrganized {
+impl DetaPut for Vec<TroutStocking> {
+    const DETA_BASE: DetaBase = TroutStocking::DETA_BASE;
+    fn deta_put(&self, deta: &Deta) {
+        self.iter().for_each(|d| d.deta_put(deta));
+    }
+}
+
+impl DetaPut for TroutStockingOrganized {
     const DETA_BASE: DetaBase = DetaBase::TroutStocking;
 }
 
-impl DetaPush for TroutStockingDataMetadata {
+impl DetaPut for TroutStockingDataMetadata {
     const DETA_BASE: DetaBase = DetaBase::TroutStockingIndex;
 }
+
 #[derive(Serialize, Deserialize, Debug)]
 struct TroutStockingDataMetadata {
     key: String,
@@ -139,7 +148,7 @@ async fn deta_action_trigger(Json(payload): Json<DetaAction>) {
     match payload.event.id {
         DetaTriggerId::ScrapeNewData => collect_new_data().await,
         DetaTriggerId::ReindexData => reindex_trout_stocking_data().await,
-        DetaTriggerId::DetaBaseMigration => migrate_trout_stocking_data().await,
+        DetaTriggerId::DetaBaseMigration => migrate_trout_stocking_database().await,
     };
 }
 
@@ -152,15 +161,15 @@ async fn collect_new_data() {
 
     // Push raw data.
     debug!("Collecting new data.");
-    trout_data.deta_push(&deta);
+    trout_data.deta_put(&deta);
 
     // Index data.
     debug!("Indexing trout data ({}).", trout_data.key);
-    index_trout_data(&deta, &trout_data);
+    index_trout_data(&trout_data).deta_put(&deta);
 
     // Organize data and push if successful.
     debug!("Organizing trout data.");
-    trout_data.organize().deta_push(&deta);
+    trout_data.organize().deta_put(&deta);
 }
 
 async fn reindex_trout_stocking_data() {
@@ -185,13 +194,14 @@ async fn reindex_trout_stocking_data() {
     debug!("Indexing trout records.");
     let _ = trout_data
         .iter()
-        .map(|t| index_trout_data(&deta, t))
+        .map(index_trout_data)
+        .map(|i| i.deta_put(&deta))
         .collect::<Vec<_>>();
 
     info!("Finished re-indexing trout stocking data.");
 }
 
-fn index_trout_data(deta: &Deta, trout_data: &TroutStocking) {
+fn index_trout_data(trout_data: &TroutStocking) -> TroutStockingDataMetadata {
     debug!("Indexing {}", trout_data.key);
 
     // Compute metadata values.
@@ -207,13 +217,11 @@ fn index_trout_data(deta: &Deta, trout_data: &TroutStocking) {
         num_stocked_locations,
     };
     debug!("Metadata: {:?}", metadata);
-
-    // Push to index database.
-    metadata.deta_push(deta);
+    metadata
 }
 
-async fn migrate_trout_stocking_data() {
-    info!("Migrating trout stocking data.");
+async fn migrate_trout_stocking_database() {
+    info!("Migrating trout stocking database.");
 
     debug!("Creating Deta client.");
     let deta = Deta::new();
@@ -240,14 +248,13 @@ async fn migrate_trout_stocking_data() {
     debug!("Deserialized data!");
 
     info!("Pushing data to Deta Base.");
-    let _: Vec<()> = trout_data.iter().map(|tr| tr.deta_push(&deta)).collect();
+    let _: Vec<()> = trout_data.iter().map(|tr| tr.deta_put(&deta)).collect();
 
     info!("Finished data migration.");
 }
 
 fn add_timestamp_field_to_timestamp_data(data: &mut Value) {
     debug!("Adding `timestamp` field to `timestamp` data.");
-
     debug!("{}", data["timestamp"]);
     if data["timestamp"].get("timestamp").is_some() {
         debug!("Already has timestamp.timestamp field.");
