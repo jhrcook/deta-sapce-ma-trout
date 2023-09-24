@@ -51,7 +51,7 @@ pub trait DetaPut: Serialize {
         debug!("Connecting to Deta Base: {}", Self::DETA_BASE);
         let base = deta.base(Self::DETA_BASE.as_str());
         match base.put(vec![self]) {
-            Ok(_) => info!("Successfully PUT data."),
+            Ok(_) => debug!("Successfully PUT data."),
             Err(e) => {
                 error!("Error during PUT data: {}", e);
                 panic!("Could not PUT data.")
@@ -148,7 +148,7 @@ async fn deta_action_trigger(Json(payload): Json<DetaAction>) {
     match payload.event.id {
         DetaTriggerId::ScrapeNewData => collect_new_data().await,
         DetaTriggerId::ReindexData => reindex_trout_stocking_data().await,
-        DetaTriggerId::DetaBaseMigration => migrate_trout_stocking_database().await,
+        DetaTriggerId::DetaBaseMigration => migrate_trout_stocking_database(),
     };
 }
 
@@ -159,17 +159,14 @@ async fn collect_new_data() {
     debug!("Creating Deta client.");
     let deta = Deta::new();
 
-    // Push raw data.
+    // Collect new data and push to the three databases..
     debug!("Collecting new data.");
     trout_data.deta_put(&deta);
-
-    // Index data.
     debug!("Indexing trout data ({}).", trout_data.key);
     index_trout_data(&trout_data).deta_put(&deta);
-
-    // Organize data and push if successful.
     debug!("Organizing trout data.");
     trout_data.organize().deta_put(&deta);
+    info!("Finished collecting new trout stocking data.");
 }
 
 async fn reindex_trout_stocking_data() {
@@ -191,12 +188,11 @@ async fn reindex_trout_stocking_data() {
         info!("Number of parsed results: {}", trout_data.len());
     }
 
-    debug!("Indexing trout records.");
-    let _ = trout_data
+    debug!("Indexing trout records and pushing data.");
+    trout_data
         .iter()
         .map(index_trout_data)
-        .map(|i| i.deta_put(&deta))
-        .collect::<Vec<_>>();
+        .for_each(|i| i.deta_put(&deta));
 
     info!("Finished re-indexing trout stocking data.");
 }
@@ -220,7 +216,7 @@ fn index_trout_data(trout_data: &TroutStocking) -> TroutStockingDataMetadata {
     metadata
 }
 
-async fn migrate_trout_stocking_database() {
+fn migrate_trout_stocking_database() {
     info!("Migrating trout stocking database.");
 
     debug!("Creating Deta client.");
@@ -231,34 +227,48 @@ async fn migrate_trout_stocking_database() {
 
     debug!("Querying all trout stocking data.");
     let query_result = trout_db.query().limit(u16::MAX).run().unwrap();
-    let mut data: Vec<Value> = serde_json::from_value(query_result["items"].clone()).unwrap();
+    let data: Vec<Value> = serde_json::from_value(query_result["items"].clone()).unwrap();
     debug!("Number of entries: {}", data.len());
 
-    let _: Vec<()> = data
-        .iter_mut()
-        .map(add_timestamp_field_to_timestamp_data)
-        .collect();
-    info!("Finishing updating data.");
-
-    info!("Deserializing updated data.");
-    let trout_data: Vec<TroutStocking> = data
-        .iter()
-        .map(|d| serde_json::from_value(d.clone()).unwrap())
-        .collect();
-    debug!("Deserialized data!");
-
-    info!("Pushing data to Deta Base.");
-    let _: Vec<()> = trout_data.iter().map(|tr| tr.deta_put(&deta)).collect();
-
-    info!("Finished data migration.");
+    for mut entry in data {
+        let changed_data = execute_data_migration_steps(&mut entry);
+        if changed_data {
+            info!("Changes to data. Deserializing and pushing new entry.");
+            let trout_data: TroutStocking = serde_json::from_value(entry).unwrap();
+            trout_data.deta_put(&deta);
+            trout_data.organize().deta_put(&deta);
+            index_trout_data(&trout_data).deta_put(&deta);
+        } else {
+            debug!("No changes to data.")
+        }
+    }
+    info!("Finished database migration.");
 }
 
-fn add_timestamp_field_to_timestamp_data(data: &mut Value) {
+/// Execute data migration steps.
+///
+/// # Arguments
+///
+/// * `entry` - Trout stocking data entry to be updated.
+///
+/// # Returns
+///
+/// - `bool`: Whether the data has changed or not.
+///
+/// Currently, there is only a single migration step. If others are needed in the
+/// future, add another function with the same signature. The returned boolean is to
+/// indicate if the data has changed.
+fn execute_data_migration_steps(entry: &mut Value) -> bool {
+    add_timestamp_field_to_timestamp_data(entry)
+}
+
+fn add_timestamp_field_to_timestamp_data(data: &mut Value) -> bool {
     debug!("Adding `timestamp` field to `timestamp` data.");
+
     debug!("{}", data["timestamp"]);
     if data["timestamp"].get("timestamp").is_some() {
         debug!("Already has timestamp.timestamp field.");
-        return;
+        return false;
     }
 
     let ts = data["timestamp"]["datetime"]
@@ -273,6 +283,7 @@ fn add_timestamp_field_to_timestamp_data(data: &mut Value) {
 
     data["timestamp"] = merge(&data["timestamp"], &new_ts_data);
     debug!("new timestamp data: {}", data["timestamp"]);
+    true
 }
 
 pub fn merge(v: &Value, fields: &HashMap<String, Value>) -> Value {
