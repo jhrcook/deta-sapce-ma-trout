@@ -28,10 +28,24 @@ micros:
         - name: RUST_LOG
           description: Secret message only available to this Micro
           default: "info"
+
     run: ./trout_scraping_server_app
+
     actions:
       - id: "scrape-new-data"
         name: "Scrape new data"
         description: "Collects new data and saves it to Deta Base."
         trigger: "schedule"
         default_interval: "0 */2 * * *"
+
+      - id: "reindex-data"
+        name: "Re-index the trout data"
+        description: "Updates the Deta Base that maintains an index of the primary trout stocking data Deta Base."
+        trigger: "schedule"
+        default_interval: "30 2 * * 0"
+
+      # - id: "detabase-migration"
+      #   name: "Deta Base migrations."
+      #   description: "Updates the Deta Base that maintains an index of the primary trout stocking data Deta Base."
+      #   trigger: "schedule"
+      #   default_interval: "0 0 1 8 *"
