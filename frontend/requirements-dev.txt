@@ -2,3 +2,5 @@ uvicorn[standard]
 ruff
 black
 mypy
+types-requests
+types-python-dateutil

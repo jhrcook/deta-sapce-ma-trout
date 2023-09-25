@@ -6,3 +6,4 @@ pydantic
 python-dateutil
 polars
 loguru
+requests
